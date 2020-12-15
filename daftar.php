@@ -58,15 +58,18 @@
                 <div class="panel-container show">
                     <div class="panel-content">
                         <a href="<?php echo "index.php?menu=".encrypt('upload'); ?>" type="button" class="btn btn-sm btn-outline-success waves-effect waves-themed">
-                            <span class="fal fa-file-excel mr-1"></span> Upload data 
+                            <span class="fal fa-upload mr-1"></span> Upload data 
                         </a>
                         <br><br>
                         <table id="dt-basic-example" class="table table-bordered table-hover  w-100" style="width:100%">
                             <thead>
                                 <tr class="table-active text-center">
+                                    <th>ID Data</th>
                                     <th>Nama Data</th>
                                     <th>Provinsi</th>
                                     <th>Kabupaten</th>
+                                    <th>Jumlah Penduduk</th>
+                                    <th>NIP Pengupload</th>
                                     <th>Lihat Data</th>
                                 </tr>
                             </thead>
@@ -87,41 +90,53 @@
                                 $prov=substr($_SESSION['wilayah_id'],0,2);
                                 $kab=substr($_SESSION['wilayah_id'],0,2);
                                 
-                                $sql="SELECT * from data";
+                                $sql="SELECT
+                                master_prov.NMPROV,
+                                master_kab.NMKAB,
+                                `data`.id,
+                                `data`.prov,
+                                `data`.kab,
+                                `data`.kec,
+                                `data`.desa,
+                                `data`.nama,
+                                `data`.`status`,
+                                `data`.tanggal,
+                                `data`.nip,
+                                `data`.jml
+                                FROM
+                                master_kab
+                                INNER JOIN master_prov ON master_prov.KDPROV = master_kab.KDPROV
+                                INNER JOIN `data` ON `data`.prov = master_prov.KDPROV AND `data`.kab = master_kab.KDKAB
+                                ";
                                                                
                                 //$query=sqlsrv_query($conn,$sql);
                                 $query=mysqli_query($conn,$sql);
                                 //echo $sql;
                                 while($data=mysqli_fetch_array($query)){
-                                    if($data['Status']=='2'){
-                                        echo "<tr class='table-success'>";
-                                    }elseif($data['Status']=='1'){
-                                        echo "<tr class='table-warning'>";
-                                    }else{
-                                        echo "<tr class='table-danger'>";
-                                    }
-                                   
-                                    echo "<td>".$data['prov']."</td>";
-                                    echo "<td>".$data['kab']."</td>";
+                                    echo "<tr>";
+                                    echo "<td>".$data['id']."</td>";
+                                    echo "<td>".$data['nama']."</td>";
+                                    echo "<td>[".$data['prov']."] ".$data['NMPROV']."</td>";
+                                    echo "<td>[".$data['kab']."] ".$data['NMKAB']."</td>";
+                                    echo "<td>".$data['jml']."</td>";
+                                    echo "<td>".$data['nip']."</td>";
                                     //echo "<td>".tgl_indo($data['CyclePeriod']->format('Y-m-d'))."</td>";
                                    // echo "<td>".$data['nama']."</td>";
                                     //echo "<td>".$data['UnitKerja']."</td>";
                                     //echo "<td>".$data['Wilayah']."</td>";
                                     //echo "<td>".$data['TanggalUpload']->format('Y-m-d H:i:s')."</td>";
-                                    if($data['Status']=='1' || $data['Status']=='0' ){
-                                        if($data['Status']=='1')
-                                            echo "<td> Menunggu Approval ke-2 </td>";
-                                        else 
-                                            echo "<td> Menunggu Approval ke-1 </td>";
-                                    }else{
-                                        echo "<td> Sudah Approve </td>";
-                                    }
+                                    
                                     echo "<td>";
-									echo "<button type='button' onclick=\"Modal('".$data['IdTabel']."','".$data['NamaTabel']."','".$data['Status']."')\" 
+									echo "<button type='button' onclick=\"Modal('".$data['id']."','".$data['nama']."','".$data['jml']."')\" 
                                     class='btn btn-xs btn-info waves-effect waves-themed'>
                                     <i class='fal fa-search'></i>";
-									if(($data['NipUpload']==$_SESSION['niplama'] && $data['Status']=='0')  || $_SESSION['admin']=='1' ){
-										echo "<button type='button' onclick=\"hapus('".$data['IdTabel']."','".$data['NamaTabel']."')\" 
+
+                                    echo "<button type='button' onclick=\"hapus('".$data['id']."','".$data['nama']."')\" 
+										class='btn btn-xs btn-danger waves-effect waves-themed'>
+										<i class='fal fa-trash'></i>";
+                                    /*
+									if(($data['nip']==$_SESSION['niplama'] )  || $_SESSION['admin']=='1' ){
+										echo "<button type='button' onclick=\"hapus('".$data['id']."','".$data['nama']."')\" 
 										class='btn btn-xs btn-danger waves-effect waves-themed'>
 										<i class='fal fa-trash'></i>";
                                     }
@@ -146,7 +161,7 @@
 										    class='btn btn-xs btn-success waves-effect waves-themed'>
                                             <i class='fal fa-check'></i>";
                                         }
-                                    }
+                                    }*/
                                    
                                     echo "</td>";
                                     echo "</tr>";
@@ -188,7 +203,7 @@
         $("#myModal").modal();
         document.getElementById("judul").innerHTML = nama;
         var xhr = new XMLHttpRequest();
-        var url = "submit_ajax.php";
+        var url = "tf_api_detail_data.php";
         document.getElementById("loading_proses_modal").style.display = "block";
 
         var data = JSON.stringify({
@@ -224,7 +239,7 @@
             if (result.value)
             {
                 var xhr = new XMLHttpRequest();
-                var url = "submit_ajax.php";
+                var url = "tf_api_hapus_data.php";
                 var data = JSON.stringify({
                     id: id,
                     menuId: 5
@@ -234,7 +249,7 @@
                 xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
                 xhr.onload = function () {               
                     console.log (this.responseText);
-                    if(this.responseText=='ok'){
+                    if(this.responseText==='ok'){
                         Swal.fire({
                             title: "Terhapus",
                             text: "Data "+nama+" sudah terhapus",

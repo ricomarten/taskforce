@@ -10,8 +10,9 @@ $kolom=0;
 $err=0;
 //print_r($array);
 $id=mysqli_fetch_array(mysqli_query($conn, "SELECT UUID() as id "));
-$sql_insert="INSERT into data (id,prov,kab,nama,tanggal,jml) values
-                  ('".$id['id']."','".$array['nama_data']."','".$array['provinsi']."','".$array['kabupaten']."','".$today."',$row)";
+$sql_insert="INSERT into data (id,prov,kab,nama,tanggal,jml,nip) values
+                  ('".$id['id']."','".$array['provinsi']."','".$array['kabupaten']."',
+                  '".$array['nama_data']."','".$today."',$row,'".$array['nip']."')";
 $insert=mysqli_query($conn, $sql_insert);
 for($i=1;$i<$row;$i++){  
     for($j=0;$j<=7;$j++){
@@ -44,7 +45,9 @@ for($i=1;$i<$row;$i++){
     }
 }
 if(!$insert || ($err>0)){
-    echo "Error input";
+    echo "Error input atau data sudah pernah diupload";
+    mysqli_query($conn, "DELETE from data where id='".$id['id']."'");
+    mysqli_query($conn, "DELETE from detail_data where id_data='".$id['id']."'");
 }else{
     echo "ok";
 }

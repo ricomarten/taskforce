@@ -26,6 +26,11 @@ function cek_string($arr) {
         return true;
     }
 }
+function ContainsNumbers($String){
+    if(preg_match('/\\d/', $String) > 0) return true;
+    else return false;
+}
+
 $tabel=[];$judul=[];
 $Sheets = $data -> Sheets();
 foreach ($Sheets as $Index => $Name){
@@ -70,17 +75,24 @@ for($baris=0;$baris<$j;$baris++){
                 $error++;
             }else{
                 if($kolom==0){
-                    if(strlen($tabel[$baris][$kolom])<>16){
+                    if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom]<>'-'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                     }
                 }elseif($kolom==1){
-                    if($tabel[$baris][$kolom]==$tabel[$baris][$kolom-1]){
+                    if($tabel[$baris][$kolom]==$tabel[$baris][$kolom-1] && $tabel[$baris][$kolom]<>'-'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
-                    }else if(strlen($tabel[$baris][$kolom])<>16){
+                    }else if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom]<>'-'){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }else{
+                        echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
+                    }
+                }elseif($kolom==2){
+                    if(strlen($tabel[$baris][$kolom])<4 || ContainsNumbers($tabel[$baris][$kolom])){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{

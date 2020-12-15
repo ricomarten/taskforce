@@ -9,7 +9,7 @@ if (!isset($_SESSION['niplama'])){
    header('Location: login.php');
 }else{
    $manus = array( 
-                "daftar#Dashboard#home#1",
+                "dashboard#Dashboard#home#1",
                 "upload#Upload Data#cloud-upload#0",
                 "fenomena#Entri Fenomena#eye#0",
                 "entri#Entri Fenomena#eye#0",

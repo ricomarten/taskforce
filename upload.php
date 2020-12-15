@@ -32,6 +32,10 @@
                 </div>
                 <div class="panel-container show">
                     <div class="panel-content">
+                        <a href="upload/format data excel.xlsx" type="button" class="btn btn-sm btn-outline-success waves-effect waves-themed">
+                            <span class="fal fa-file-excel mr-1"></span> Download Template Excel 
+                        </a>
+                        <br><br>
                         <div class="form-group row">
                             <label for="domain" class="col-sm-2 col-form-label"><strong>Nama Data</strong></label>                   
                             <div class="col-sm-10">
