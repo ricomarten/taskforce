@@ -8,7 +8,7 @@
     <style>
         .my-custom-scrollbar {
         position: relative;
-        height: 400px;
+        height: 800px;
         overflow: auto;
         }
         .table-wrapper-scroll-y {
