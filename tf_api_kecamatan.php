@@ -6,16 +6,14 @@ if(empty($_POST['a'])){
 }
 else{
 	include 'koneksi.php';
-	$id = preg_replace("/[^a-zA-Z0-9\s]/", "", $_POST['a']);
-	//echo $id;
-    //$new_string = preg_replace('/\s/', '-', $new_string);
-	//$id = urlencode($new_string);
-	
-	$sql_kab=mysqli_query($conn,"SELECT * from master_kab where KDPROV = '".$id."'");
+    $prov = preg_replace("/[^a-zA-Z0-9\s]/", "", $_POST['a']);
+    $kab = preg_replace("/[^a-zA-Z0-9\s]/", "", $_POST['b']);
+		
+	$sql_kab=mysqli_query($conn,"SELECT * from master_kec where KDPROV = '".$prov."' and KDKAB = '".$kab."'");
 	while($data_kab = mysqli_fetch_array( $sql_kab)){
-		$respon = array("code"=>$data_kab['KDKAB'],
-						"name"=>"[".$data_kab['KDKAB']."] ".mb_convert_encoding($data_kab['NMKAB'], 'UTF-8', 'UTF-8'),
-						"full_name"=>$data_kab['NMKAB']);
+		$respon = array("code"=>$data_kab['KDKEC'],
+						"name"=>"[".$data_kab['KDKEC']."] ".mb_convert_encoding($data_kab['NMKEC'], 'UTF-8', 'UTF-8'),
+						"full_name"=>$data_kab['NMKEC']);
 		array_push($responses,$respon);
 		//print_r($data_user);
 	}

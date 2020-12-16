@@ -59,7 +59,7 @@
                             </div>                                                                
                         </div>
                         <div class="form-group row">
-                            <label for="provinsi" class="col-sm-2 col-form-label"><strong>Kabupaten/Kota</strong></label>                   
+                            <label for="kabupaten" class="col-sm-2 col-form-label"><strong>Kabupaten/Kota</strong></label>                   
                             <div class="col-sm-10">                          
                                 <div class="input-group" >
                                     <select class="select2-placeholder form-control w-100" id="kabupaten" >
@@ -68,7 +68,26 @@
                                 </div>
                             </div>                                                             
                         </div>
-                         
+                        <div class="form-group row">
+                            <label for="kecamatan" class="col-sm-2 col-form-label"><strong>Kecamatan</strong></label>                   
+                            <div class="col-sm-10">                          
+                                <div class="input-group" >
+                                    <select class="select2-placeholder form-control w-100" id="kecamatan" >
+                                    <option value=''></option>
+                                    </select>
+                                </div>
+                            </div>                                                             
+                        </div>
+                        <div class="form-group row">
+                            <label for="desa" class="col-sm-2 col-form-label"><strong>Desa</strong></label>                   
+                            <div class="col-sm-10">                          
+                                <div class="input-group" >
+                                    <select class="select2-placeholder form-control w-100" id="desa" >
+                                    <option value=''></option>
+                                    </select>
+                                </div>
+                            </div>                                                             
+                        </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Upload Data</label>
                             <div class="col-sm-10">
@@ -243,73 +262,77 @@
         }         
     }       
     function Simpan(){
-        var jml_error=document.getElementById("jml_error").value;
-        //alert(document.getElementById("jml_error").value)
+        if(document.body.contains(document.getElementById('jml_error'))){
+            var nip = document.getElementById("nip").value;
+            var unitkerja= document.getElementById("unitkerja").value;
+            var wilayah= document.getElementById("wilayah").value;
         
-        var nip = document.getElementById("nip").value;
-        var unitkerja= document.getElementById("unitkerja").value;
-        var wilayah= document.getElementById("wilayah").value;
-       
-        var nama_data= document.getElementById("nama_data").value;
-        var provinsi= document.getElementById("provinsi").value;
-        var kabupaten= document.getElementById("kabupaten").value;
+            var nama_data= document.getElementById("nama_data").value;
+            var provinsi= document.getElementById("provinsi").value;
+            var kabupaten= document.getElementById("kabupaten").value;
+            var jml_error=document.getElementById("jml_error").value;
+            
+            if (jml_error>0){
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan",
+                    html: "Data masih ada yang error",
+                });
+            }
+            else if(nama_data=='' || provinsi=='' ||kabupaten==''){
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan",
+                    html: "Semua isian harus terisi",
+                });
+            }
+            else {
+                //alert(arrdata+"\nNIP:"+nip+"\nUnit Kerja:"+unitkerja+"\nWilayah:"+wilayah+"\nData:"+
+                //JSON.stringify(GetCellValues(), null, 4))
+                var xhr = new XMLHttpRequest();
+                var url = "tf_api_simpan.php";
+                document.getElementById("loading_proses").style.display = "block";
 
-        
-        if (jml_error>0){
+                var data = JSON.stringify({
+                    //arrdata:arrdata,
+                    tabel:GetCellValues(),
+                    nip:nip,
+                    unitkerja:unitkerja,
+                    nama_data:nama_data,
+                    provinsi:provinsi,
+                    kabupaten:kabupaten,
+                    menuId: 3
+                });
+
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.onload = function () {               
+                    console.log (this.responseText);
+                    if(this.responseText=='ok'){
+                        window.location.href = "index.php?menu=<?php echo encrypt('daftar') ?>";
+                        document.getElementById("loading_proses").style.display = "none";
+                    }else {
+                        Swal.fire(
+                        {
+                            icon: "error",
+                            title: "Terjadi kesalahan",
+                            html: this.responseText,
+                        });
+                        document.getElementById("loading_proses").style.display = "none";
+                        //document.getElementById("status2").innerHTML = this.responseText;
+                    }
+                };
+
+                xhr.send(data);
+                return false;
+            }
+        }else{
             Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                html: "Data masih ada yang error",
+                title: "Terjadi kesalahan",
+                html: "File belum diupload",
             });
-        }
-        else if(nama_data=='' || provinsi=='' ||kabupaten==''){
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                html: "Semua isian harus terisi",
-            });
-        }
-        else {
-            //alert(arrdata+"\nNIP:"+nip+"\nUnit Kerja:"+unitkerja+"\nWilayah:"+wilayah+"\nData:"+
-            //JSON.stringify(GetCellValues(), null, 4))
-            var xhr = new XMLHttpRequest();
-            var url = "tf_api_simpan.php";
-            document.getElementById("loading_proses").style.display = "block";
-
-            var data = JSON.stringify({
-                //arrdata:arrdata,
-                tabel:GetCellValues(),
-                nip:nip,
-                unitkerja:unitkerja,
-                nama_data:nama_data,
-                provinsi:provinsi,
-                kabupaten:kabupaten,
-                menuId: 3
-            });
-
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.onload = function () {               
-                console.log (this.responseText);
-                if(this.responseText=='ok'){
-                    window.location.href = "index.php?menu=<?php echo encrypt('daftar') ?>";
-                    document.getElementById("loading_proses").style.display = "none";
-                }else {
-                    Swal.fire(
-                    {
-                        icon: "error",
-                        title: "Oops...",
-                        html: this.responseText,
-                    });
-                    document.getElementById("loading_proses").style.display = "none";
-                    //document.getElementById("status2").innerHTML = this.responseText;
-                }
-            };
-
-            xhr.send(data);
-            return false;
-        }
-        
+        }   
     }
     function GetCellValues() {
         var arr=[]

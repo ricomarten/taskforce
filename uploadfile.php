@@ -1,6 +1,6 @@
 <?php
 session_start();
-error_reporting(0);
+//error_reporting(0);
 date_default_timezone_set('Asia/Jakarta');
 require('spreadsheet-reader-master/php-excel-reader/excel_reader2.php');
 require('spreadsheet-reader-master/SpreadsheetReader.php');
@@ -34,21 +34,31 @@ function ContainsNumbers($String){
 $tabel=[];$judul=[];
 $Sheets = $data -> Sheets();
 foreach ($Sheets as $Index => $Name){
-    if($Index==$_POST['index']){
+    //if($Index==$_POST['index']){
         $data -> ChangeSheet($Index);
         $j=0;
         foreach ($data as $Key => $Row){
             if($j==0){
-                for($i=0;$i<7;$i++){
+                for($i=0;$i<8;$i++){
                     $judul[$i]=$Row[$i];
                 }    
             }
-            for($i=0;$i<7;$i++){
-                $tabel[$j][$i]=$Row[$i];
-            }            
-            $j++;
+            
+            
+            if($Row[0]=='' && $Row[1]=='' && $Row[2]=='' && $Row[3]=='' && $Row[4]=='' && $Row[5]=='' && $Row[6]=='' && $Row[7]==''){        
+                
+            }else{
+                for($i=0;$i<8;$i++){
+                    if($Row[$i]==''){
+                        $tabel[$j][$i]='-';
+                    }else{
+                        $tabel[$j][$i]=$Row[$i];
+                    }               
+                }
+                $j++;
+            }
         }      
-    }        
+    //}        
 }
 $error=0;
 //echo "<button type='button' class='btn btn-info' onclick='tampilin()'>Hide/Preview Data</button><br>";
@@ -75,30 +85,37 @@ for($baris=0;$baris<$j;$baris++){
                 $error++;
             }else{
                 if($kolom==0){
-                    if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom]<>'-'){
+                    if($tabel[$baris][$kolom]=='0' && $tabel[$baris][$kolom+1]<>'-'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                     }
                 }elseif($kolom==1){
-                    if($tabel[$baris][$kolom]==$tabel[$baris][$kolom-1] && $tabel[$baris][$kolom]<>'-'){
-                        cetak_error($tabel[$baris][$kolom]);
-                        $error++;
-                    }else if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom]<>'-'){
+                    if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom-1]=='1'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                     }
                 }elseif($kolom==2){
-                    if(strlen($tabel[$baris][$kolom])<4 || ContainsNumbers($tabel[$baris][$kolom])){
+                    if($tabel[$baris][$kolom]==$tabel[$baris][$kolom-1] && $tabel[$baris][$kolom-1]=='1'){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }elseif(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom]<>'-'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                     }
                 }elseif($kolom==3){
+                    if(strlen($tabel[$baris][$kolom])<4 || ContainsNumbers($tabel[$baris][$kolom])){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }else{
+                        echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
+                    }
+                }elseif($kolom==4){
                     if($tabel[$baris][$kolom]<>'L' && $tabel[$baris][$kolom]<>'l' &&
                         $tabel[$baris][$kolom]<>'P' && $tabel[$baris][$kolom]<>'p' ){
                         cetak_error($tabel[$baris][$kolom]);
@@ -106,19 +123,26 @@ for($baris=0;$baris<$j;$baris++){
                     }else{
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                     }
-                }elseif($kolom==6){
-                    $tgl=explode("/",$tabel[$baris][($kolom-1)]);
-                    $tanggal=$tgl[1]."/".$tgl[0]."/".$tgl[2];                    
-                    $date = new DateTime($tanggal);
-                    $now = new DateTime();
-                    $interval = $now->diff($date);
-                    if(($interval->y)<>$tabel[$baris][$kolom]){
-                        cetak_error($tabel[$baris][$kolom]);
-                        $error++;
-                    }else{
+                }                
+                elseif($kolom==7){
+                    if($tabel[$baris][$kolom]=='-' && $tabel[$baris][($kolom-1)]=='-'){
                         echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
-                    }
-                }else{
+                    }else{
+                        $tgl=explode("/",$tabel[$baris][($kolom-1)]);
+                        $tanggal=$tgl[1]."/".$tgl[0]."/".$tgl[2];                    
+                        $date = new DateTime($tanggal);
+                        $now = new DateTime();
+                        $interval = $now->diff($date);
+                        if(($interval->y)<>$tabel[$baris][$kolom]){
+                            $isi_eror=$tabel[$baris][$kolom]." -> ".strval($interval->y);
+                            cetak_error($isi_eror);
+                            $error++;
+                        }else{
+                            echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
+                        }
+                    }                  
+                }               
+                else{
                     echo "<td width='".(100/$i)."%'>".$tabel[$baris][$kolom]."</td>";
                 }
                 

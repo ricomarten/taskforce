@@ -27,18 +27,26 @@ for($i=1;$i<$row;$i++){
         }elseif($j==5){
             $alamat= $array['tabel'][$i*8+$j]['tabel']['nilai'];
         }elseif($j==6){
-            //$tgl= $array['tabel'][$i*8+$j]['tabel']['nilai'];
-            $tgl=explode("/",$array['tabel'][$i*8+$j]['tabel']['nilai']);
-            $tanggal=$tgl[2]."-".$tgl[1]."-".$tgl[0];
+            if($array['tabel'][$i*8+$j]['tabel']['nilai']=='-'){
+                $tanggal='1800-01-01';
+            }else{
+                //$tgl= $array['tabel'][$i*8+$j]['tabel']['nilai'];
+                $tgl=explode("/",$array['tabel'][$i*8+$j]['tabel']['nilai']);
+                $tanggal=$tgl[2]."-".$tgl[1]."-".$tgl[0];
+            }
         }elseif($j==7){
-            $umur= $array['tabel'][$i*8+$j]['tabel']['nilai'];
+            if($array['tabel'][$i*8+$j]['tabel']['nilai']=='-'){
+                $umur='-1';
+            }else{
+                $umur= $array['tabel'][$i*8+$j]['tabel']['nilai'];
+            }
         }
         //echo $array['tabel'][$i*8+$j]['tabel']['nilai'];
         
     }
     //echo $nik." ".$kk." ".$nama." ".$jk." ".$tgl;
     $sql=mysqli_query($conn, "INSERT into detail_data(nik,kk,nama,jenkel,alamat,tgl_lhr,umur,id_data)
-                            values('$nik','$kk','$nama','$jk','$alamat','$tanggal','$umur','".$id['id']."')");
+                            values('$nik','$kk','".strtoupper($nama)."','".strtoupper($jk)."','$alamat','$tanggal','$umur','".$id['id']."')");
     $kolom++;
     if(!$sql){
         $err++;

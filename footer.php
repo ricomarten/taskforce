@@ -279,16 +279,21 @@
                 $('#kabupaten').select2({
                     placeholder: "Pilih Kabupaten/Kota"
                 });
+                $('#kecamatan').select2({
+                    placeholder: "Pilih Kecamatan"
+                });
+                $('#desa').select2({
+                    placeholder: "Pilih Desa/Kelurahan"
+                });
                 $('#provinsi').change(function() {
-                    var selectedCategory = $('#provinsi option:selected').val();
+                    var provinsi = $('#provinsi option:selected').val();
                     document.getElementById("loading_proses").style.display = "block";
                     $.ajax({
                         type: 'POST',
                         url: 'tf_api_kabupaten.php',
                         dataType: 'html',
                         data: {
-                            a: 'kabupaten',
-                            c: selectedCategory
+                            a: provinsi,
                         },
                         success: function(txt){
                             //no action on success, its done in the next part
@@ -303,85 +308,23 @@
                             list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
                         });
                         $('#kabupaten').html(list_html);
+                        $('#kecamatan').html('');
+                        $('#desa').html('');
                         $('#kabupaten').select2({placeholder: data.length +' results'});
                         document.getElementById("loading_proses").style.display = "none";
                     })                  
                 });
-                
-                <?php } ?>
-                <?php if(decrypt($_GET['menu'])=='generate' || decrypt($_GET['menu'])=='entri'){?>
-                $('#daterange').daterangepicker(
-                {
-                    opens: 'left'
-                }, function(start, end, label)
-                {
-                    console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
-                });
-
-                $('#wilayah').select2({
-                    placeholder: "Pilih wilayah"
-                });
-                $('#transaksi').select2({
-                    placeholder: "Pilih jenis transaksi"
-                });
-                $('#kodetransaksi').select2({
-                    placeholder: "Pilih kode transaksi"
-                });
-                $('#institusi').select2({
-                    placeholder: "Pilih sektor institusi"
-                });
-                $('#kodeinstitusi').select2({
-                    placeholder: "Pilih kode institusi"
-                });
-                $('#series').select2({
-                    placeholder: "Pilih series data"
-                });
-                $('#detailseries').select2({
-                    placeholder: "Pilih detail series data"
-                });
-                $('#detailseries').select2({
-                    placeholder: "Pilih detail series data"
-                });
-                $('#detailseriestahun').select2({
-                    placeholder: "Pilih tahun data"
-                });
-                $('#kuantitas').select2({
-                    placeholder: "Pilih ukuran kuantitas"
-                });             
-                $('#konkordansi').select2({
-                    placeholder: "Pilih konkordansi"
-                });
-                $('#komoditas').select2({
-                    placeholder: "Pilih jenis klasifikasi"
-                });
-                $('#kodekomoditas').select2({
-                    placeholder: "Pilih kode aset/komoditas"
-                });
-                $('#klasifikasi').select2({
-                    placeholder: "Pilih jenis klasifikasi"
-                });
-                $('#kodeklasifikasi').select2({
-                    placeholder: "Pilih kode aktivitas/lapangan usaha"
-                });
-                $('#tren').select2({
-                    placeholder: "Pilih tren data"
-                });
-                $('#seriesdata').select2({
-                    placeholder: "Pilih series data"
-                });
-                $('#range').select2({
-                    placeholder: "Pilih rentang periode data"
-                });
-                $('#komoditas').change(function() {
-                    var selectedCategory = $('#komoditas option:selected').val();
-                    document.getElementById("loading_proses3").style.display = "block";
+                $('#kabupaten').change(function() {
+                    var provinsi = $('#provinsi option:selected').val();
+                    var kabupaten = $('#kabupaten option:selected').val();
+                    document.getElementById("loading_proses").style.display = "block";
                     $.ajax({
                         type: 'POST',
-                        url: <?php if(decrypt($_GET['menu'])=='entri') echo "'komoditasid.php'"; else echo "'komoditas.php'"; ?>,
+                        url: 'tf_api_kecamatan.php',
                         dataType: 'html',
                         data: {
-                            a: 'kodekomoditas',
-                            c: selectedCategory
+                            a: provinsi,
+                            b: kabupaten,
                         },
                         success: function(txt){
                             //no action on success, its done in the next part
@@ -395,21 +338,25 @@
                         $.each(data, function(i, item) {
                             list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
                         });
-                        $('#kodekomoditas').html(list_html);
-                        $('#kodekomoditas').select2({placeholder: data.length +' results'});
-                        document.getElementById("loading_proses3").style.display = "none";
+                        $('#kecamatan').html(list_html);
+                        $('#desa').html('');
+                        $('#kecamatan').select2({placeholder: data.length +' results'});
+                        document.getElementById("loading_proses").style.display = "none";
                     })                  
                 });
-                $('#klasifikasi').change(function() {
-                    var selectedCategory = $('#klasifikasi option:selected').val();
-                    document.getElementById("loading_proses2").style.display = "block";
+                $('#kecamatan').change(function() {
+                    var provinsi = $('#provinsi option:selected').val();
+                    var kabupaten = $('#kabupaten option:selected').val();
+                    var kecamatan = $('#kecamatan option:selected').val();
+                    document.getElementById("loading_proses").style.display = "block";
                     $.ajax({
                         type: 'POST',
-                        url: <?php if(decrypt($_GET['menu'])=='entri') echo "'komoditasid.php'"; else echo "'komoditas.php'"; ?>,
+                        url: 'tf_api_desa.php',
                         dataType: 'html',
                         data: {
-                            a: 'kodeklasifikasi',
-                            c: selectedCategory
+                            a: provinsi,
+                            b: kabupaten,
+                            c: kecamatan,
                         },
                         success: function(txt){
                             //no action on success, its done in the next part
@@ -423,113 +370,16 @@
                         $.each(data, function(i, item) {
                             list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
                         });
-                        $('#kodeklasifikasi').html(list_html);
-                        $('#kodeklasifikasi').select2({placeholder: data.length +' results'});
-                        document.getElementById("loading_proses2").style.display = "none";
-                    })                  
-                });
-                $('#transaksi').change(function() {
-                    var selectedCategory = $('#transaksi option:selected').val();
-                    document.getElementById("loading_proses4").style.display = "block";
-                    $.ajax({
-                        type: 'POST',
-                        url: <?php if(decrypt($_GET['menu'])=='entri') echo "'komoditasid.php'"; else echo "'komoditas.php'"; ?>,
-                        dataType: 'html',
-                        data: {
-                            a: 'kodetransaksi',
-                            c: selectedCategory
-                        },
-                        success: function(txt){
-                            //no action on success, its done in the next part
-                        }
-                    }).done(function(data){
-                        //get JSON
-                        data = $.parseJSON(data);
-                        //generate <options from JSON
-                        var list_html = '';
-                        list_html += '<option value=></option>';
-                        $.each(data, function(i, item) {
-                            list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
-                        });
-                        $('#kodetransaksi').html(list_html);
-                        $('#kodetransaksi').select2({placeholder: data.length +' results'});
-                        document.getElementById("loading_proses4").style.display = "none";
-                    })                  
-                });
-                $('#institusi').change(function() {
-                    var selectedCategory = $('#institusi option:selected').val();
-                    document.getElementById("loading_proses5").style.display = "block";
-                    $.ajax({
-                        type: 'POST',
-                        url: <?php if(decrypt($_GET['menu'])=='entri') echo "'komoditasid.php'"; else echo "'komoditas.php'"; ?>,
-                        dataType: 'html',
-                        data: {
-                            a: 'kodeinstitusi',
-                            c: selectedCategory
-                        },
-                        success: function(txt){
-                            //no action on success, its done in the next part
-                        }
-                    }).done(function(data){
-                        //get JSON
-                        data = $.parseJSON(data);
-                        //generate <options from JSON
-                        var list_html = '';
-                        list_html += '<option value=></option>';
-                        $.each(data, function(i, item) {
-                            list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
-                        });
-                        $('#kodeinstitusi').html(list_html);
-                        $('#kodeinstitusi').select2({placeholder: data.length +' results'});
-                        document.getElementById("loading_proses5").style.display = "none";
-                    })                  
-                });
-                $('#series').change(function() {
-                    var selectedCategory = $('#series option:selected').val();
-                    if(selectedCategory=='A'){
-                        $("#periodeHari").hide();
-                        $("#periodeBulan").hide();
-                        $("#periodeTahun").show();
-                    }else if(selectedCategory=='D' || selectedCategory=='U' ){
-                        $("#periodeHari").show();
-                        $("#periodeBulan").hide();
-                        $("#periodeTahun").hide();
-                    }else{
-                        $("#periodeHari").hide();
-                        $("#periodeBulan").show();
-                        $("#periodeTahun").show();
-                    }
-                    
-                    document.getElementById("loading_proses6").style.display = "block";
-                    $.ajax({
-                        type: 'POST',
-                        url: 'detailPeriode.php',
-                        dataType: 'html',
-                        data: {
-                            a: 'series',
-                            c: selectedCategory
-                        },
-                        success: function(txt){
-                            //no action on success, its done in the next part
-                        }
-                    }).done(function(data){
-                        //get JSON
-                        data = $.parseJSON(data);
-                        //generate <options from JSON
-                        var list_html = '';
-                        list_html += '<option value=></option>';
-                        $.each(data, function(i, item) {
-                            list_html += '<option value='+data[i].code+'>'+data[i].name+'</option>';
-                        });
-                        $('#detailseries').html(list_html);
-                        $('#detailseries').select2({placeholder: data.length +' results'});
-                        document.getElementById("loading_proses6").style.display = "none";
+                        $('#desa').html(list_html);
+                        $('#desa').select2({placeholder: data.length +' results'});
+                        document.getElementById("loading_proses").style.display = "none";
                     })                  
                 });
                 <?php } ?>
+            
             });
 </script>
-<?php if(decrypt($_GET['menu'])=='daftar'){?>
+<?php if(decrypt($_GET['menu'])=='daftar' || decrypt($_GET['menu'])=='dashboard'){?>
         <script src="js/datagrid/datatables/jquery.dataTables.min.js"></script>
         <script src="js/datagrid/datatables/dataTables.bootstrap4.min.js"></script>
         <script src="js/datagrid/datatables/dataTables.buttons.min.js"></script>
