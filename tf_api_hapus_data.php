@@ -7,7 +7,6 @@ $json_obj = json_decode($json_str);
 $deleteinput=mysqli_query($conn,"DELETE from data where id='$json_obj->id'");
 $deletetabel=mysqli_query($conn,"DELETE from detail_data where id_data='$json_obj->id'");
 
-//echo "</pre>";
 if($deleteinput && $deletetabel) {
     echo "ok";
     

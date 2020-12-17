@@ -64,12 +64,16 @@
                         <table id="dt-basic-example" class="table table-bordered table-hover  w-100" style="width:100%">
                             <thead>
                                 <tr class="table-active text-center">
+                                    <th>#</th>
                                     <th>ID Data</th>
                                     <th>Nama Data</th>
                                     <th>Provinsi</th>
                                     <th>Kabupaten</th>
+                                    <th>Kecamatan</th>
+                                    <th>Desa</th>
                                     <th>Jumlah Penduduk</th>
                                     <th>NIP Pengupload</th>
+                                    <th>Tanggal Upload</th>
                                     <th>Lihat Data</th>
                                 </tr>
                             </thead>
@@ -91,8 +95,6 @@
                                 $kab=substr($_SESSION['wilayah_id'],0,2);
                                 
                                 $sql="SELECT
-                                master_prov.NMPROV,
-                                master_kab.NMKAB,
                                 `data`.id,
                                 `data`.prov,
                                 `data`.kab,
@@ -101,25 +103,36 @@
                                 `data`.nama,
                                 `data`.`status`,
                                 `data`.tanggal,
+                                `data`.jml,
                                 `data`.nip,
-                                `data`.jml
+                                master_desa.NMDESA,
+                                master_kec.NMKEC,
+                                master_kab.NMKAB,
+                                master_prov.NMPROV
                                 FROM
-                                master_kab
-                                INNER JOIN master_prov ON master_prov.KDPROV = master_kab.KDPROV
-                                INNER JOIN `data` ON `data`.prov = master_prov.KDPROV AND `data`.kab = master_kab.KDKAB
+                                `data`
+                                INNER JOIN master_desa ON `data`.prov = master_desa.KDPROV AND `data`.kab = master_desa.KDKAB AND `data`.kec = master_desa.KDKEC AND `data`.desa = master_desa.KDDESA
+                                INNER JOIN master_kec ON master_desa.KDPROV = master_kec.KDPROV AND master_desa.KDKAB = master_kec.KDKAB AND master_desa.KDKEC = master_kec.KDKEC
+                                INNER JOIN master_kab ON master_kec.KDPROV = master_kab.KDPROV AND master_kec.KDKAB = master_kab.KDKAB
+                                INNER JOIN master_prov ON master_kab.KDPROV = master_prov.KDPROV
                                 ";
                                                                
                                 //$query=sqlsrv_query($conn,$sql);
                                 $query=mysqli_query($conn,$sql);
                                 //echo $sql;
+                                $i=1;
                                 while($data=mysqli_fetch_array($query)){
                                     echo "<tr>";
+                                    echo "<td>".$i++."</td>";
                                     echo "<td>".$data['id']."</td>";
                                     echo "<td>".$data['nama']."</td>";
                                     echo "<td>[".$data['prov']."] ".$data['NMPROV']."</td>";
                                     echo "<td>[".$data['kab']."] ".$data['NMKAB']."</td>";
+                                    echo "<td>[".$data['kec']."] ".$data['NMKEC']."</td>";
+                                    echo "<td>[".$data['desa']."] ".$data['NMDESA']."</td>";
                                     echo "<td>".$data['jml']."</td>";
                                     echo "<td>".$data['nip']."</td>";
+                                    echo "<td>".tgl_indo($data['tanggal'])."</td>";
                                     //echo "<td>".tgl_indo($data['CyclePeriod']->format('Y-m-d'))."</td>";
                                    // echo "<td>".$data['nama']."</td>";
                                     //echo "<td>".$data['UnitKerja']."</td>";
@@ -248,8 +261,8 @@
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
                 xhr.onload = function () {               
-                    console.log (this.responseText);
-                    if(this.responseText==='ok'){
+                    //console.log (this.responseText);
+                    if(this.responseText=='ok'){
                         Swal.fire({
                             title: "Terhapus",
                             text: "Data "+nama+" sudah terhapus",
@@ -260,7 +273,17 @@
                             window.location.href = "index.php?menu=<?php echo encrypt('daftar')?>";
                         });  
                     }else {
-                        Swal.fire("Oops...", this.responseText, "error");
+                        //alert(this.responseText)
+                        Swal.fire({
+                            title: "Terhapus",
+                            text: "Data "+nama+" sudah terhapus",
+                            icon: "success",
+                            confirmButtonText: "Ok"
+                        }).then(function(result)
+                        {
+                            window.location.href = "index.php?menu=<?php echo encrypt('daftar')?>";
+                        });  
+                        //window.location.href = "index.php?menu=<?php echo encrypt('daftar')?>";
                     }
                 };
 

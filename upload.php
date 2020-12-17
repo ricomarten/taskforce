@@ -50,7 +50,7 @@
                                 <select class="select2-placeholder form-control w-100" id="provinsi">
                                     <option value=''></option>
                                     <?php
-                                        $sql_prov=mysqli_query($conn, "SELECT * from master_prov");
+                                        $sql_prov=mysqli_query($conn, "SELECT * from master_prov where KDPROV<>'00'");
                                         while($prov = mysqli_fetch_array($sql_prov)){
                                             echo "<option value='".$prov['KDPROV']."'>[".$prov['KDPROV']."] ".$prov['NMPROV']."</option>";
                                         }
@@ -196,18 +196,23 @@
         var file = archivoSeleccionado.files[0];
         if (file) {
             var fileSize = 0;
-            if (file.size > 1048576)
+            if (file.size > 1048576){
                 fileSize = (Math.round(file.size * 100 / 1048576) / 100).toString() + ' MB';
-            else
+            }else{
                 fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + ' Kb';
-
+            }          
             var keterangan = document.getElementById('keterangan');
-            var divfileType = document.getElementById('fileType');
-
-            //keterangan.innerHTML = '<div class="panel-tag">Nama file:<code>'+file.name+'</code> <br>Ukuran file:<code>'+fileSize+'</code><br>Tipe file <code>'+file.type+'</code></div>' ;
+            //var divfileType = document.getElementById('fileType');
+            keterangan.innerHTML = '<div class="panel-tag">Nama file:<code>'+file.name+'</code> <br>Ukuran file:<code>'+fileSize+'</code><br>Tipe file <code>'+file.type+'</code></div>' ;
             document.getElementById("status").innerHTML = "";
-            document.getElementById("result").innerHTML = "";
-            uploadFile()
+            //if(file.size>=2097152){
+            if(file.size>=1048576){
+                document.getElementById("result").innerHTML='<div class="alert alert-danger alert-dismissible fade show" role="alert">'+
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="fal fa-times"></i></span></button>File yang diupload tidak lebih dari 1 MB</div>';
+            }else{
+                document.getElementById("result").innerHTML = "";
+                uploadFile()
+            }           
         }
     }     
 
@@ -270,7 +275,10 @@
             var nama_data= document.getElementById("nama_data").value;
             var provinsi= document.getElementById("provinsi").value;
             var kabupaten= document.getElementById("kabupaten").value;
+            var kecamatan= document.getElementById("kecamatan").value;
+            var desa= document.getElementById("desa").value;
             var jml_error=document.getElementById("jml_error").value;
+            var jml_baris=document.getElementById("jml_baris").value;
             
             if (jml_error>0){
                 Swal.fire({
@@ -279,11 +287,11 @@
                     html: "Data masih ada yang error",
                 });
             }
-            else if(nama_data=='' || provinsi=='' ||kabupaten==''){
+            else if(nama_data=='' || provinsi=='' ||kabupaten=='' || kecamatan=='' || desa==''){
                 Swal.fire({
                     icon: "error",
                     title: "Terjadi kesalahan",
-                    html: "Semua isian harus terisi",
+                    html: "Semua isian form harus terisi",
                 });
             }
             else {
@@ -301,7 +309,9 @@
                     nama_data:nama_data,
                     provinsi:provinsi,
                     kabupaten:kabupaten,
-                    menuId: 3
+                    kecamatan:kecamatan,
+                    desa:desa,
+                    jml_baris:jml_baris,
                 });
 
                 xhr.open("POST", url, true);
