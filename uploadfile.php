@@ -83,7 +83,10 @@ for($baris=0;$baris<$j;$baris++){
                 $error++;
             }else{
                 if($kolom==0){
-                    if($tabel[$baris][$kolom]=='0' && $tabel[$baris][$kolom+1]<>'-'){
+                    if($tabel[$baris][$kolom]<>'0' || $tabel[$baris][$kolom]=='1'){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }elseif($tabel[$baris][$kolom]=='0' && $tabel[$baris][$kolom+1]<>'-'){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
@@ -91,6 +94,9 @@ for($baris=0;$baris<$j;$baris++){
                     }
                 }elseif($kolom==1){
                     if(strlen($tabel[$baris][$kolom])<>16 && $tabel[$baris][$kolom-1]=='1'){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }elseif(strlen($tabel[$baris][$kolom])<=16 && ($tabel[$baris][$kolom-1]=='0' || $tabel[$baris][$kolom-1]=='-' )){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
@@ -107,7 +113,7 @@ for($baris=0;$baris<$j;$baris++){
                         echo "<td>".$tabel[$baris][$kolom]."</td>";
                     }
                 }elseif($kolom==3){
-                    if(strlen($tabel[$baris][$kolom])<4 || ContainsNumbers($tabel[$baris][$kolom])){
+                    if(ContainsNumbers($tabel[$baris][$kolom]) || strlen($tabel[$baris][$kolom])<=1){
                         cetak_error($tabel[$baris][$kolom]);
                         $error++;
                     }else{
@@ -121,8 +127,14 @@ for($baris=0;$baris<$j;$baris++){
                     }else{
                         echo "<td>".$tabel[$baris][$kolom]."</td>";
                     }
-                }                
-                elseif($kolom==7){
+                }elseif($kolom==5){
+                    if(strlen($tabel[$baris][$kolom])<=1){
+                        cetak_error($tabel[$baris][$kolom]);
+                        $error++;
+                    }else{
+                        echo "<td>".$tabel[$baris][$kolom]."</td>";
+                    }
+                }elseif($kolom==7){
                     if($tabel[$baris][$kolom]=='-' && $tabel[$baris][($kolom-1)]=='-'){
                         echo "<td>".$tabel[$baris][$kolom]."</td>";
                     }else{
@@ -139,11 +151,9 @@ for($baris=0;$baris<$j;$baris++){
                             echo "<td>".$tabel[$baris][$kolom]."</td>";
                         }
                     }                  
-                }               
-                else{
+                }else{
                     echo "<td>".$tabel[$baris][$kolom]."</td>";
                 }
-                
             }  
         }
     }

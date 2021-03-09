@@ -70,9 +70,14 @@
                                 detail_data.id_data = data.id 
                                 where data.prov=master_kab.KDPROV and data.kab=master_kab.KDKAB and detail_data.nik<>'-' and jenkel='P') as nip_p
                                 FROM
-                                master_kab LEFT JOIN master_prov on master_prov.KDPROV=master_kab.KDPROV 
+                                master_kab LEFT JOIN master_prov on master_prov.KDPROV=master_kab.KDPROV
+                                
                                 ";
-                                                               
+                                if($_SESSION['prov']=='00'){
+                                    $sql=$sql;
+                                }else{
+                                    $sql=$sql."where master_kab.KDPROV='".$_SESSION['prov']."'";
+                                }                         
                                 //$query=sqlsrv_query($conn,$sql);
                                 $query=mysqli_query($conn,$sql);
                                 //echo $sql;

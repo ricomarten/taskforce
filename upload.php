@@ -50,7 +50,12 @@
                                 <select class="select2-placeholder form-control w-100" id="provinsi">
                                     <option value=''></option>
                                     <?php
-                                        $sql_prov=mysqli_query($conn, "SELECT * from master_prov where KDPROV<>'00'");
+                                        if($_SESSION['prov']=='00'){
+                                            $sql_prov=mysqli_query($conn, "SELECT * from master_prov where KDPROV<>'00'");
+                                        }else{
+                                            $sql_prov=mysqli_query($conn, "SELECT * from master_prov where KDPROV='".$_SESSION['prov']."'");
+                                        }
+                                        
                                         while($prov = mysqli_fetch_array($sql_prov)){
                                             echo "<option value='".$prov['KDPROV']."'>[".$prov['KDPROV']."] ".$prov['NMPROV']."</option>";
                                         }
@@ -286,6 +291,12 @@
                     title: "Terjadi kesalahan",
                     html: "Data masih ada yang error",
                 });
+            }else if(jml_baris<=1){
+                Swal.fire({
+                    icon: "error",
+                    title: "Terjadi kesalahan",
+                    html: "Data harus terisi minimal 1",
+                });
             }
             else if(nama_data=='' || provinsi=='' ||kabupaten=='' || kecamatan=='' || desa==''){
                 Swal.fire({
@@ -300,7 +311,7 @@
                 var xhr = new XMLHttpRequest();
                 var url = "tf_api_simpan.php";
                 document.getElementById("loading_proses").style.display = "block";
-
+                
                 var data = JSON.stringify({
                     //arrdata:arrdata,
                     tabel:GetCellValues(),

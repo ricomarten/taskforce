@@ -21,6 +21,8 @@ if($json_obj->username=='' || $json_obj->password==''){
         $_SESSION['unitkerja_id']='71300';
         $_SESSION['wilayah_id']='0000';
         $_SESSION['url_foto']='';
+        $_SESSION['prov']='72';
+        $_SESSION['kab']='01';
         $_SESSION['jabatan']=$data['jabatan'];
         echo "ok";
     }else{

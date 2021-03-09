@@ -379,7 +379,7 @@
             
             });
 </script>
-<?php if(decrypt($_GET['menu'])=='daftar' || decrypt($_GET['menu'])=='dashboard'){?>
+
         <script src="js/datagrid/datatables/jquery.dataTables.min.js"></script>
         <script src="js/datagrid/datatables/dataTables.bootstrap4.min.js"></script>
         <script src="js/datagrid/datatables/dataTables.buttons.min.js"></script>
@@ -393,7 +393,7 @@ $(document).ready(function() {
              emptyTable: "Anda belum memiliki daftar data"
         },
         responsive: true,
-        order: [[ 0, "desc" ]],
+        order: [[ 0, "asc" ]],
         lengthChange: true,
         dom: "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
                         "<'row'<'col-sm-12'tr>>" +
@@ -405,6 +405,6 @@ $(document).ready(function() {
     });
 } );
 </script>
-<?php } ?>
+
 </body>
 </html>

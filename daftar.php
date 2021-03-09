@@ -65,7 +65,7 @@
                             <thead>
                                 <tr class="table-active text-center">
                                     <th>#</th>
-                                    <th>ID Data</th>
+                                    
                                     <th>Nama Data</th>
                                     <th>Provinsi</th>
                                     <th>Kabupaten</th>
@@ -116,7 +116,11 @@
                                 INNER JOIN master_kab ON master_kec.KDPROV = master_kab.KDPROV AND master_kec.KDKAB = master_kab.KDKAB
                                 INNER JOIN master_prov ON master_kab.KDPROV = master_prov.KDPROV
                                 ";
-                                                               
+                                if($_SESSION['prov']=='00'){
+                                    $sql=$sql;
+                                }else{
+                                    $sql=$sql."where data.nip='".$_SESSION['niplama']."'";
+                                }                              
                                 //$query=sqlsrv_query($conn,$sql);
                                 $query=mysqli_query($conn,$sql);
                                 //echo $sql;
@@ -124,7 +128,7 @@
                                 while($data=mysqli_fetch_array($query)){
                                     echo "<tr>";
                                     echo "<td>".$i++."</td>";
-                                    echo "<td>".$data['id']."</td>";
+                                    //echo "<td>".$data['id']."</td>";
                                     echo "<td>".$data['nama']."</td>";
                                     echo "<td>[".$data['prov']."] ".$data['NMPROV']."</td>";
                                     echo "<td>[".$data['kab']."] ".$data['NMKAB']."</td>";

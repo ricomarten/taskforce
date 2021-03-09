@@ -1,4 +1,5 @@
 <?php
+session_start();
 $responses = array();	
 
 if(empty($_POST['a'])){
@@ -10,8 +11,12 @@ else{
 	//echo $id;
     //$new_string = preg_replace('/\s/', '-', $new_string);
 	//$id = urlencode($new_string);
+	if($_SESSION['kab']=='00'){
+		$sql_kab=mysqli_query($conn,"SELECT * from master_kab where KDPROV = '".$id."'");
+	}else{
+		$sql_kab=mysqli_query($conn,"SELECT * from master_kab where KDPROV = '".$id."' and KDKAB='".$_SESSION['kab']."'");
+	}
 	
-	$sql_kab=mysqli_query($conn,"SELECT * from master_kab where KDPROV = '".$id."'");
 	while($data_kab = mysqli_fetch_array( $sql_kab)){
 		$respon = array("code"=>$data_kab['KDKAB'],
 						"name"=>"[".$data_kab['KDKAB']."] ".mb_convert_encoding($data_kab['NMKAB'], 'UTF-8', 'UTF-8'),

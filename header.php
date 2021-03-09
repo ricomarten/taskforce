@@ -7,9 +7,9 @@
 foreach($manus as $menu){
     $judul=explode('#',$menu);
     if(!isset($_GET['menu'])){
-        echo "Daftar Laporan";
+        echo "Rekap Data";
     }
-    if(decrypt($_GET['menu'])==$judul[0]){
+    elseif(decrypt($_GET['menu'])==$judul[0]){
         echo $judul[1];
     }
 }

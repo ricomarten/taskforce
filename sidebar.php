@@ -37,7 +37,7 @@
 foreach($manus as $menu){
     $pisah=explode('#',$menu);
     if(!isset($_GET['menu'])){
-        $_GET['menu']='datar';
+        $_GET['menu']='daftar';
     }
     if($pisah[3]=='1'){
         if(decrypt($_GET['menu'])==$pisah[0]){
